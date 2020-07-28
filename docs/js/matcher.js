@@ -107,9 +107,9 @@ HanziLookup.Matcher = (function (dataName, looseness) {
     // We use a CubicCurve that grows slowly at first and then rapidly near the end to the maximum.
     var y0 = subStrokeCount * 0.25;
     var ctrl1X = 0.4;
-    var ctrl1Y = 1.5 * y0;
+    var ctrl1Y = 2.0 * y0;
     var ctrl2X = 0.75;
-    var ctrl2Y = 1.5 * ctrl1Y;
+    var ctrl2Y = 2.5 * ctrl1Y;
     var curve = new HanziLookup.CubicCurve2D(0, y0, ctrl1X, ctrl1Y, ctrl2X, ctrl2Y, 1, HanziLookup.MAX_CHARACTER_SUB_STROKE_COUNT);
     var t = curve.getFirstSolutionForX(_looseness);
     // We get the t value on the parametrized curve where the x value matches the looseness.
