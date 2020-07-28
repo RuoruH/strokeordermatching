@@ -64,7 +64,7 @@ HanziLookup.Matcher = (function (dataName, looseness) {
     // When trying to match sub stroke patterns, won't compare sub strokes
     // that are farther about in sequence than this range.  This is to make
     // computing matches less expensive for low loosenesses.
-    var subStrokesRange = 3;
+    var subStrokesRange = getSubStrokesRange(subStrokeCount);;
     var minSubStrokes = Math.max(subStrokeCount - subStrokesRange, 1);
     var maxSubStrokes = Math.min(subStrokeCount + subStrokesRange, HanziLookup.MAX_CHARACTER_SUB_STROKE_COUNT);
     // Iterate over all characters in repo
