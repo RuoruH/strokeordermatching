@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Handwritten Chinese Recognition</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="./css/style.css" rel="stylesheet" type="text/css" />
+		
+	
+	</head>
+	<body>
+		<div>
+
+			<h1>Draw Hanzi here</h1>
+			<div id="drawingCanvas" style='background-color: aliceblue;width:250px;height:250px;cursor:url("./resource/pen.ico"),auto;'></div>
+			<div class="btn-group" role="group">
+				<button id="removeLastBtn" type="button" class="btn btn-warning">Remove last stroke</button>
+				<button id="clearBtn" type="button" class="btn btn-danger">Clear everything</button>
+			</div>
+
+			<h1>Recognized Result</h1>
+			<div id="resultArea" style="border: 2px solid #a0a0a0; padding: 4px;height: 80px;width: 600px;font-size: 48px;background-color: #FAFAFA;overflow: hidden;color: #606060;"></div>
+
+		</div>
+
+		<script src="./js/jquery-3.1.1.min.js"></script>
+		<script src="./js/testbed.js"></script>
+		<script src="./js/analyzedCharacter.js"></script>
+		<script src="./js/analyzedStroke.js"></script>
+		<script src="./js/characterMatch.js"></script>
+		<script src="./js/cubicCurve2D.js"></script>
+		<script src="./js/decodeCompact.js"></script>
+		<script src="./js/drawingBoard.js"></script>
+		<script src="./js/init.js"></script>
+		<script src="./js/matchCollector.js"></script>
+		<script src="./js/matcher.js"></script>
+		<script src="./js/strokeInputOverlay.js"></script>
+		<script src="./js/subStroke.js"></script>
+		<script>
+			var app = (function() {
+				var canvasDrawingArea;
+
+				$(document).ready(function() {
+					HanziLookup.init("hanzi", "./data/data.json", initialize);
+				});
+
+				function initialize(success) {
+					if (!success) {
+						alert("Fail to initialize!");
+						return;
+					}
+					canvasDrawingArea = HanziLookup.DrawingBoard($("#drawingCanvas").first(), recognizeHanzi);
+					$("#removeLastBtn").click(function(evt) {
+						canvasDrawingArea.undoStroke();
+						canvasDrawingArea.redraw();
+						recognizeHanzi();
+					});
+					$("#clearBtn").click(function(evt) {
+						canvasDrawingArea.clearCanvas();
+						canvasDrawingArea.redraw();
+						$("#resultArea").html("");
+						recognizeHanzi();
+					});
+				}
+
+				function recognizeHanzi() {
+					var strokes = canvasDrawingArea.cloneStrokes();
+					var recognizeResult = new HanziLookup.AnalyzedCharacter(strokes);
+					var recognizer = new HanziLookup.Matcher("hanzi");
+					recognizer.match(recognizeResult, 18, function(matches) {
+						displayHanzi($("#resultArea"), matches);
+					});
+				}
+
+				function displayHanzi(displayArea, results) {
+					displayArea.html("");
+					for (var i = 0; i != results.length; ++i) {
+						displayArea.append("<span>" + results[i].character + "</span>");
+					}
+				}
+			})();
+		</script>
+	</body>
+</html>
